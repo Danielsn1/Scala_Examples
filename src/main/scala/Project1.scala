@@ -17,19 +17,28 @@ class PlayFair(val phrase: String = "") {
   private val spacer = spaceCreator()
   //creates a function stored in a variable that checks if the key object contains a certain character
   private val keyCheck = (char: Char) => if (key.contains(char)) true else false
+  //creates a function that maps each character to a open spot in the key
   private val mapper = (char: Char) =>
     if (!keyCheck(char) && !char.isWhitespace && char != 'j') charAdder(char.toLower)
+  //calls the mapper function on every single element in the augmented phrase
   augmentedPhrase.foreach(mapper)
 
-  private def spaceCreator(): (Char) => String ={
+  /* this is a closure function that takes in characters and outputs a string that has spaces every 5th character it
+     is used in conjunction with a for each statement to get rid of a for loop in a way that was not possible in
+     previous languages that i have used */
+   def spaceCreator(): (Char) => String ={
     var counter = 1
     def spaceAdder(char: Char):String = {
+      /* using if statement as an expression which is not possible in java, while also using the semicolon to put
+       multiple lines of code on the same line */
       if(counter % 5 == 0 && counter != 0) {counter += 1 ; char + " "}
       else{counter += 1 ; char.toString}
     }
     spaceAdder
   }
 
+  /*This is another closure function that adds the characters to the key map also using a foreach statement in order
+  * to not use a for loop in a wa that is not possible in previous languages*/
   private def adderCreator(): (Char) => Unit = {
     var x = 0
     var y = 0
@@ -50,8 +59,12 @@ class PlayFair(val phrase: String = "") {
     adder
   }
 
+  /* This function takes a string as an argument and filters the message to be only characters stripping out white spaces
+  * and punctuation marks. Then the function returns pairs of characters, but if they are the same character it changes
+  * the copy to an x */
   def getPairs(message: String): ListBuffer[String] = {
     val pairs = new ListBuffer[String]
+    //filters the message so only letters are left
     val cleanMessage = message.filter(_.isLetter)
     var counter = 0
     while (counter < cleanMessage.length - 1) {
@@ -110,5 +123,5 @@ object Project1 extends App {
 
   val pw = new PrintWriter(new File("src/main/scala/encrypted.txt" ))
   pw.write(playfair.encrypt(book))
-  pw.close
+  pw.close()
 }

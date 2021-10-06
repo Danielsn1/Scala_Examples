@@ -78,15 +78,19 @@ class PlayFair(val phrase: String = "") {
     pairs
   }
 
+  /* This method takes a String that is to be encrypted and returns it encrypted using the playfair cypher */
   def encrypt(message: String): String = {
     val pairs = getPairs(message)
     var encrypted = ""
     var result = ""
     pairs.foreach(encrypted += encryption(_, key, encode = true))
+    // Uses the closure function defined earlier to add spaces every 5th character
     encrypted.foreach(result += spacer(_) )
     result
   }
 
+  /* This method takes a String that is encrypted using the playfair cypher and decrypts it returning the input
+  *  without any space or punctuation and having several added x's where there were double letters */
   def decrypt(message: String): String = {
     val pairs = getPairs(message)
     var result = ""
@@ -94,33 +98,46 @@ class PlayFair(val phrase: String = "") {
     result
   }
 
+  /* This function is used to both do encryption and decryption and is initialized for either process using the encode
+  *  flag. When the flag is true that means that the function is encoding, when encode is false that means the function
+  *  is decrypting. The function returns the inputted pair of characters as either encrypted or decrypted */
   private def encryption(pair: String, key: Map[Char, Cord], encode: Boolean): String = {
     val pos1 = if (pair(0) != 'j') key(pair(0)) else key('i')
     val pos2 = if (pair(1) != 'j') key(pair(1)) else key('i')
     val increment: Int = if (encode) 1 else -1
     val startWrap: Int = if (encode) 4 else 0
     val endWrap: Int = if (encode) 0 else 4
+    /* This chunk of code uses an else if block as an expression and returns certain values depending on what the if
+    *  statements returning which can not be done in other languages*/
+    // This condition is for is the letters are in the same row in the matrix
     if (pos1.x == pos2.x) key.find(_._2 ==
       Cord(pos1.x, if (pos1.y == startWrap) endWrap else pos1.y + increment)).get._1.toString +
       key.find(_._2 == Cord(pos2.x, if (pos2.y == startWrap) endWrap else pos2.y + increment)).get._1.toString
+    // This condition is for if the letters are in the same column in the matrix
     else if (pos1.y == pos2.y) key.find(_._2 ==
       Cord(if (pos1.x == startWrap) endWrap else pos1.x + increment, pos1.y)).get._1.toString +
       key.find(_._2 == Cord(if (pos2.x == startWrap) endWrap else pos2.x + increment, pos2.y)).get._1.toString
+    // This condition is if the letters are not in the same row or column, gets the row from
     else key.find(_._2 == Cord(pos2.x, pos1.y)).get._1.toString +
       key.find(_._2 == Cord(pos1.x, pos2.y)).get._1.toString
   }
 }
 
 object Project1 extends App {
+  // Creates an object that contains the information to be able to read from the file defined by the path given
   val file = Source.fromFile("C:\\Users\\13194\\IdeaProjects\\Awsome\\src\\main\\scala\\The_Hunger_Games.txt")
+  // Creates a string from the contents of the file
   val book = file.mkString.filter(_.isLetter)
+  // Closes the file
   file.close()
+  // Creates a playfair object with a specific phrase
   val playfair = new PlayFair("How Vexingly Quick Daft Zebras jump")
-  val encrypted = playfair.encrypt("book      that is super cool")
+
+  /*val encrypted = playfair.encrypt("book      that is super cool")
   println(encrypted)
   val decrypted = playfair.decrypt(encrypted)
-  println(decrypted)
-
+  println(decrypted)*/
+  // Writes a file to the given path
   val pw = new PrintWriter(new File("src/main/scala/encrypted.txt" ))
   pw.write(playfair.encrypt(book))
   pw.close()

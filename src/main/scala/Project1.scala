@@ -67,8 +67,9 @@ class PlayFair(val phrase: String = "") {
     //filters the message so only letters are left
     val cleanMessage = message.filter(_.isLetter)
     var counter = 0
-    while (counter < cleanMessage.length - 1) {
-      if (cleanMessage(counter) == cleanMessage(counter + 1)) pairs.append(cleanMessage(counter).toLower.toString + "x")
+    while (counter <= cleanMessage.length - 1) {
+      if (counter == cleanMessage.length-1 || cleanMessage(counter) == cleanMessage(counter + 1))
+        pairs.append(cleanMessage(counter).toLower.toString + "x")
       else {
         pairs.append(cleanMessage(counter).toLower.toString + cleanMessage(counter + 1).toLower.toString)
         counter += 1
@@ -133,10 +134,11 @@ object Project1 extends App {
   // Creates a playfair object with a specific phrase
   val playfair = new PlayFair("How Vexingly Quick Daft Zebras jump")
 
-  /*val encrypted = playfair.encrypt("book      that is super cool")
+  /*val encrypted = playfair.encrypt("booooooooooooooooooooookp")
   println(encrypted)
   val decrypted = playfair.decrypt(encrypted)
   println(decrypted)*/
+
   // Writes a file to the given path
   val pw = new PrintWriter(new File("src/main/scala/encrypted.txt" ))
   pw.write(playfair.encrypt(book))

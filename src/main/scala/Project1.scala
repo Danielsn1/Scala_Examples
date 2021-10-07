@@ -3,6 +3,7 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
 import java.io.PrintWriter
 import java.io.File
+import scala.io.StdIn.readLine
 
 // Created a class to keep track of the position of the letter in a 5X5 array
 case class Cord(x: Int, y: Int)
@@ -132,10 +133,12 @@ object Project1 extends App {
   val book = file.mkString.filter(_.isLetter)
   // Closes the file
   file.close()
+  // Inputs the phrase from the user
+  val phrase = readLine("Enter the phrase to create the PlayFair cypher:H ")
   // Creates a playfair object with a specific phrase
-  val playfair = new PlayFair("How Vexingly Quick Daft Zebras jump")
+  val playfair = new PlayFair(phrase)
 
-  /*val encrypted = playfair.encrypt("booooooooooooooooooooookp")
+  /*val encrypted = playfair.encrypt("booooooo")
   println(encrypted)
   val decrypted = playfair.decrypt(encrypted)
   println(decrypted)*/

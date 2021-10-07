@@ -4,41 +4,41 @@ import scala.collection.mutable.Map
 import java.io.PrintWriter
 import java.io.File
 
-//Created a class to keep track of the position of the letter in a 5X5 array
+// Created a class to keep track of the position of the letter in a 5X5 array
 case class Cord(x: Int, y: Int)
 
 class PlayFair(val phrase: String = "") {
-  //adds the alphabet to the given phrase so that every phrase given will result in a valid key
+  // Adds the alphabet to the given phrase so that every phrase given will result in a valid key
   private val augmentedPhrase = phrase + "abcdefghijklmnopqrstuvwxyz"
-  //create the key object that uses a map to hold the letters and their coordinates
+  // Create the key object that uses a map to hold the letters and their coordinates
   private val key: Map[Char, Cord] = Map()
-  //creates two closure functions that are used later to accomplish things that could not be done in previous languages
+  // Creates two closure functions that are used later to accomplish things that could not be done in previous languages
   private val charAdder = adderCreator()
   private val spacer = spaceCreator()
-  //creates a function stored in a variable that checks if the key object contains a certain character
+  // Creates a function stored in a variable that checks if the key object contains a certain character
   private val keyCheck = (char: Char) => if (key.contains(char)) true else false
-  //creates a function that maps each character to a open spot in the key
+  // Creates a function that maps each character to a open spot in the key
   private val mapper = (char: Char) =>
     if (!keyCheck(char) && !char.isWhitespace && char != 'j') charAdder(char.toLower)
-  //calls the mapper function on every single element in the augmented phrase
+  // Calls the mapper function on every single element in the augmented phrase
   augmentedPhrase.foreach(mapper)
 
-  /* this is a closure function that takes in characters and outputs a string that has spaces every 5th character it
-     is used in conjunction with a for each statement to get rid of a for loop in a way that was not possible in
-     previous languages that i have used */
+  /* This is a closure function that takes in characters and outputs a string that has spaces every 5th character it
+   * is used in conjunction with a for each statement to get rid of a for loop in a way that was not possible in
+   * previous languages that i have used */
    def spaceCreator(): (Char) => String ={
     var counter = 1
     def spaceAdder(char: Char):String = {
-      /* using if statement as an expression which is not possible in java, while also using the semicolon to put
-       multiple lines of code on the same line */
+      /* Using if statement as an expression which is not possible in java, while also using the semicolon to put
+       * multiple lines of code on the same line */
       if(counter % 5 == 0 && counter != 0) {counter += 1 ; char + " "}
       else{counter += 1 ; char.toString}
     }
     spaceAdder
   }
 
-  /*This is another closure function that adds the characters to the key map also using a foreach statement in order
-  * to not use a for loop in a wa that is not possible in previous languages*/
+  /* This is another closure function that adds the characters to the key map also using a foreach statement in order
+   * to not use a for loop in a wa that is not possible in previous languages*/
   private def adderCreator(): (Char) => Unit = {
     var x = 0
     var y = 0
@@ -60,11 +60,11 @@ class PlayFair(val phrase: String = "") {
   }
 
   /* This function takes a string as an argument and filters the message to be only characters stripping out white spaces
-  * and punctuation marks. Then the function returns pairs of characters, but if they are the same character it changes
-  * the copy to an x */
+   * and punctuation marks. Then the function returns pairs of characters, but if they are the same character it changes
+   * the copy to an x */
   def getPairs(message: String): ListBuffer[String] = {
     val pairs = new ListBuffer[String]
-    //filters the message so only letters are left
+    // Filters the message so only letters are left
     val cleanMessage = message.filter(_.isLetter)
     var counter = 0
     while (counter <= cleanMessage.length - 1) {
@@ -118,7 +118,8 @@ class PlayFair(val phrase: String = "") {
     else if (pos1.y == pos2.y) key.find(_._2 ==
       Cord(if (pos1.x == startWrap) endWrap else pos1.x + increment, pos1.y)).get._1.toString +
       key.find(_._2 == Cord(if (pos2.x == startWrap) endWrap else pos2.x + increment, pos2.y)).get._1.toString
-    // This condition is if the letters are not in the same row or column, gets the row from
+    /* This condition is if the letters are not in the same row or column, it creates a triangle with the coordinates
+    *  given and then takes the opposite corner for each letter and returns the corresponding letter */
     else key.find(_._2 == Cord(pos2.x, pos1.y)).get._1.toString +
       key.find(_._2 == Cord(pos1.x, pos2.y)).get._1.toString
   }

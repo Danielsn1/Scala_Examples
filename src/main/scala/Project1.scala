@@ -60,29 +60,21 @@ class PlayFair(val phrase: String = "") {
     adder
   }
 
-  /* This function takes a string as an argument and filters the message to be only characters stripping out white spaces
-   * and punctuation marks. Then the function returns pairs of characters, but if they are the same character it changes
-   * the copy to an x */
+  /* This function takes a filtered string as an argument and then recursivly goes through the string and returns a pair
+   * of String. The method has two base cases of if the string was both length of one and length of two otherwise it is
+   * treated the same, the method also ads an x if there is a repeated letter in the checked pair. */
   def getPairs(message: String): ListBuffer[String] = {
     val pairs = new ListBuffer[String]
-    // Filters the message so only letters are left
-    val cleanMessage = message.filter(_.isLetter)
-    var counter = 0
-    while (counter <= cleanMessage.length - 1) {
-      if (counter == cleanMessage.length-1 || cleanMessage(counter) == cleanMessage(counter + 1))
-        pairs.append(cleanMessage(counter).toLower.toString + "x")
-      else {
-        pairs.append(cleanMessage(counter).toLower.toString + cleanMessage(counter + 1).toLower.toString)
-        counter += 1
-      }
-      counter += 1
-    }
-    pairs
+    if(message.length == 1) return pairs.addOne(message + "x")
+    if(message.length == 2) if(message.charAt(0) == message.charAt(1))
+    { return pairs += (message.charAt(0) + "x", message.charAt(1) + "x")} else return pairs.addOne(message)
+    if(message.charAt(0) == message.charAt(1)) return pairs.addOne(message.charAt(0) + "x") ++ getPairs(message.substring(1))
+    pairs.addOne(message.charAt(0).toString + message.charAt(1).toString) ++ getPairs(message.substring(2))
   }
 
   /* This method takes a String that is to be encrypted and returns it encrypted using the playfair cypher */
   def encrypt(message: String): String = {
-    val pairs = getPairs(message)
+    val pairs = getPairs(message.filter(_.isLetter))
     var encrypted = ""
     var result = ""
     pairs.foreach(encrypted += encryption(_, key, encode = true))
@@ -94,7 +86,7 @@ class PlayFair(val phrase: String = "") {
   /* This method takes a String that is encrypted using the playfair cypher and decrypts it returning the input
   *  without any space or punctuation and having several added x's where there were double letters */
   def decrypt(message: String): String = {
-    val pairs = getPairs(message)
+    val pairs = getPairs(message.filter(_.isLetter))
     var result = ""
     pairs.foreach(result += encryption(_, key, encode = false))
     result
@@ -111,6 +103,7 @@ class PlayFair(val phrase: String = "") {
     val endWrap: Int = if (encode) 0 else 4
     /* This chunk of code uses an else if block as an expression and returns certain values depending on what the if
     *  statements returning which can not be done in other languages*/
+    // In the following statements i use the find method to return the first instance of the condition
     // This condition is for is the letters are in the same row in the matrix
     if (pos1.x == pos2.x) key.find(_._2 ==
       Cord(pos1.x, if (pos1.y == startWrap) endWrap else pos1.y + increment)).get._1.toString +
@@ -134,7 +127,7 @@ object Project1 extends App {
   // Closes the file
   file.close()
   // Inputs the phrase from the user
-  val phrase = readLine("Enter the phrase to create the PlayFair cypher:H ")
+  val phrase = readLine("Enter the phrase to create the PlayFair cypher: ")
   // Creates a playfair object with a specific phrase
   val playfair = new PlayFair(phrase)
 
